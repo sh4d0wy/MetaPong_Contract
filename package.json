@@ -12,6 +12,8 @@
   "dependencies": {
     "@nomicfoundation/hardhat-ignition": "^0.15.9",
     "dotenv": "^16.4.7",
+    "ethers": "^6.13.5",
+    "express": "^4.21.2",
     "hardhat": "^2.22.17"
   },
   "devDependencies": {
