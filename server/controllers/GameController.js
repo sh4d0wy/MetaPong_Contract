@@ -5,9 +5,13 @@ class GameController {
     async getCurrentTournament(req, res) {
         try {
             const tournamentInfo = await ContractModel.getCurrentTournamentInfo();
-            res.json(tournamentInfo);
+            res.json({ success: true, data: tournamentInfo });
         } catch (error) {
-            res.status(500).json({ error: error.message });
+            console.error('Tournament fetch error:', error);
+            res.status(400).json({ 
+                success: false, 
+                error: error.message || 'Failed to fetch tournament information'
+            });
         }
     }
 
@@ -62,6 +66,21 @@ class GameController {
             const mpxScore = await ContractModel.convertScoresToMPX(req.params.address);
             res.json({ mpxScore });
         } catch (error) {
+            res.status(500).json({ error: error.message });
+        }
+    }
+
+    async getBoosterBallPurchaseData(req, res) {
+        try {
+            const { userAddress } = req.body;
+            if (!userAddress) {
+                return res.status(400).json({ error: 'User address is required' });
+            }
+
+            const purchaseData = await ContractModel.getBoosterBallPurchaseData(userAddress);
+            res.json({ transaction: purchaseData });
+        } catch (error) {
+            console.error('Error getting purchase data:', error);
             res.status(500).json({ error: error.message });
         }
     }
