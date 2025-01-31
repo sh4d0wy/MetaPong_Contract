@@ -2,7 +2,7 @@
 const { ethers } = require('ethers');
 const path = require('path');
 require('dotenv').config({ path: path.resolve(__dirname, '../../.env') });
-const PongGameArtifact = require('../../artifacts/contracts/PongGame.sol/PongGame.json');
+const PongGameArtifact = require('../abi.json');
 
 class ContractModel {
     constructor() {
