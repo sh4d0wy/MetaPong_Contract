@@ -18,6 +18,7 @@ class ContractModel {
                 decimals: 18
             }
         };
+        this.wallet = new ethers.Wallet(process.env.PRIVATE_KEY, this.provider);
         console.log('RPC_URL:', process.env.RPC_URL);
         console.log('PRIVATE_KEY:', process.env.PRIVATE_KEY);
         this.wallet = new ethers.Wallet(process.env.PRIVATE_KEY, this.provider);
@@ -33,7 +34,7 @@ class ContractModel {
         this.contract = new ethers.Contract(
             process.env.CONTRACT_ADDRESS,
             PongGameArtifact.abi,
-            this.provider
+            this.wallet
         );
     }
 
@@ -100,8 +101,8 @@ class ContractModel {
         });
         return await tx.wait();
     }
-    async incrementScore(points, boosterBallsUsed) {
-        const tx = await this.contract.incrementScore(points, boosterBallsUsed);
+    async incrementScore(points, boosterBallsUsed,userAddress) {
+        const tx = await this.contract.incrementScore(points, boosterBallsUsed,userAddress);
         return await tx.wait();
     }
 

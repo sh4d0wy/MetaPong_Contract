@@ -1,10 +1,47 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Booster Ball Purchase Test</title>
+    <title>MetaPong Contract Test Interface</title>
+    <style>
+        .container { margin: 20px; }
+        .section { margin-bottom: 20px; padding: 10px; border: 1px solid #ccc; }
+        .result { margin-top: 10px; padding: 10px; background-color: #f0f0f0; }
+        button { margin: 5px; padding: 8px; }
+    </style>
 </head>
 <body>
-    <button onclick="testPurchase()">Buy Booster Balls</button>
+    <div class="container">
+        <h1>MetaPong Contract Test Interface</h1>
+
+        <div class="section">
+            <h2>Tournament Functions</h2>
+            <button onclick="testGetCurrentTournament()">Get Current Tournament</button>
+            <button onclick="testResetTournament()">Reset Tournament</button>
+            <div id="tournamentResult" class="result"></div>
+        </div>
+
+        <div class="section">
+            <h2>Player Functions</h2>
+            <input type="number" id="scoreInput" placeholder="Enter score points">
+            <button onclick="testIncrementScore()">Increment Score</button>
+            <button onclick="testGetPlayerStats()">Get Player Stats</button>
+            <button onclick="testGetMPXScore()">Get MPX Score</button>
+            <div id="playerResult" class="result"></div>
+        </div>
+
+        <div class="section">
+            <h2>Leaderboard</h2>
+            <button onclick="testGetLeaderboard()">Get Leaderboard</button>
+            <button onclick="testGetAllPlayers()">Get All Players</button>
+            <div id="leaderboardResult" class="result"></div>
+        </div>
+
+        <div class="section">
+            <h2>Booster Balls</h2>
+            <button onclick="testPurchaseBoosterBalls()">Buy Booster Balls</button>
+            <div id="boosterResult" class="result"></div>
+        </div>
+    </div>
 
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/ethers@6.13.5/dist/ethers.umd.min.js"></script>

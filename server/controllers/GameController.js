@@ -35,8 +35,8 @@ class GameController {
 
     async incrementScore(req, res) {
         try {
-            const { points, boosterBallsUsed } = req.body;
-            const receipt = await ContractModel.incrementScore(points, boosterBallsUsed);
+            const { points, boosterBallsUsed,userAddress } = req.body;
+            const receipt = await ContractModel.incrementScore(points, boosterBallsUsed,userAddress);
             res.json({ success: true, transactionHash: receipt.hash });
         } catch (error) {
             res.status(500).json({ error: error.message });

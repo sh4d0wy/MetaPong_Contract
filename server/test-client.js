@@ -65,6 +65,83 @@ class GameClient {
         }
     }
 
+    async getCurrentTournament() {
+        try {
+            const response = await axios.get(`${this.baseURL}/tournament/current`);
+            return response.data;
+        } catch (error) {
+            console.error('Failed to get tournament:', error);
+            throw error;
+        }
+    }
+
+    async resetTournament() {
+        try {
+            const response = await axios.post(`${this.baseURL}/tournament/reset`);
+            return response.data;
+        } catch (error) {
+            console.error('Failed to reset tournament:', error);
+            throw error;
+        }
+    }
+
+    async incrementScore(points) {
+        try {
+            const userAddress = await this.checkWalletConnection();
+            const response = await axios.post(`${this.baseURL}/score/increment`, {
+                points: points,
+                boosterBallsUsed: 0,
+                userAddress:userAddress
+            });
+            return response.data;
+        } catch (error) {
+            console.error('Failed to increment score:', error);
+            throw error;
+        }
+    }
+
+    async getPlayerStats() {
+        try {
+            const userAddress = await this.checkWalletConnection();
+            const response = await axios.get(`${this.baseURL}/player/${userAddress}`);
+            return response.data;
+        } catch (error) {
+            console.error('Failed to get player stats:', error);
+            throw error;
+        }
+    }
+
+    async getMPXScore() {
+        try {
+            const userAddress = await this.checkWalletConnection();
+            const response = await axios.get(`${this.baseURL}/player/${userAddress}/mpx`);
+            return response.data;
+        } catch (error) {
+            console.error('Failed to get MPX score:', error);
+            throw error;
+        }
+    }
+
+    async getLeaderboard() {
+        try {
+            const response = await axios.get(`${this.baseURL}/leaderboard`);
+            return response.data;
+        } catch (error) {
+            console.error('Failed to get leaderboard:', error);
+            throw error;
+        }
+    }
+
+    async getAllPlayers() {
+        try {
+            const response = await axios.get(`${this.baseURL}/players`);
+            return response.data;
+        } catch (error) {
+            console.error('Failed to get all players:', error);
+            throw error;
+        }
+    }
+
     async testAllFunctions() {
         try {
             console.log('Starting tests...\n');
@@ -117,41 +194,81 @@ class GameClient {
     }
 }
 
-// Example usage in browser
-async function testPurchase() {
-    const client = new GameClient();
+// Test function handlers
+const client = new GameClient();
+
+async function testGetCurrentTournament() {
     try {
-        const txHash = await client.buyBoosterBalls();
-        console.log('Purchase successful! Transaction hash:', txHash);
-        
-        // Optionally wait for transaction confirmation
-        const receipt = await waitForTransaction(txHash);
-        console.log('Transaction confirmed:', receipt);
+        const result = await client.getCurrentTournament();
+        document.getElementById('tournamentResult').innerText = JSON.stringify(result, null, 2);
     } catch (error) {
-        console.error('Purchase failed:', error);
+        document.getElementById('tournamentResult').innerText = `Error: ${error.message}`;
     }
 }
 
-// Helper function to wait for transaction confirmation
-async function waitForTransaction(txHash) {
-    const checkReceipt = async () => {
-        const receipt = await window.ethereum.request({
-            method: 'eth_getTransactionReceipt',
-            params: [txHash],
-        });
-        return receipt;
-    };
+async function testResetTournament() {
+    try {
+        const result = await client.resetTournament();
+        document.getElementById('tournamentResult').innerText = JSON.stringify(result, null, 2);
+    } catch (error) {
+        document.getElementById('tournamentResult').innerText = `Error: ${error.message}`;
+    }
+}
 
-    // Poll for transaction receipt
-    while (true) {
-        const receipt = await checkReceipt();
-        if (receipt) {
-            return receipt;
-        }
-        await new Promise(resolve => setTimeout(resolve, 1000)); // Wait 1 second before checking again
+async function testIncrementScore() {
+    try {
+        const points = parseInt(document.getElementById('scoreInput').value) || 0;
+        const result = await client.incrementScore(points);
+        document.getElementById('playerResult').innerText = JSON.stringify(result, null, 2);
+    } catch (error) {
+        document.getElementById('playerResult').innerText = `Error: ${error.message}`;
+    }
+}
+
+async function testGetPlayerStats() {
+    try {
+        const result = await client.getPlayerStats();
+        document.getElementById('playerResult').innerText = JSON.stringify(result, null, 2);
+    } catch (error) {
+        document.getElementById('playerResult').innerText = `Error: ${error.message}`;
+    }
+}
+
+async function testGetMPXScore() {
+    try {
+        const result = await client.getMPXScore();
+        document.getElementById('playerResult').innerText = JSON.stringify(result, null, 2);
+    } catch (error) {
+        document.getElementById('playerResult').innerText = `Error: ${error.message}`;
+    }
+}
+
+async function testGetLeaderboard() {
+    try {
+        const result = await client.getLeaderboard();
+        document.getElementById('leaderboardResult').innerText = JSON.stringify(result, null, 2);
+    } catch (error) {
+        document.getElementById('leaderboardResult').innerText = `Error: ${error.message}`;
+    }
+}
+
+async function testGetAllPlayers() {
+    try {
+        const result = await client.getAllPlayers();
+        document.getElementById('leaderboardResult').innerText = JSON.stringify(result, null, 2);
+    } catch (error) {
+        document.getElementById('leaderboardResult').innerText = `Error: ${error.message}`;
+    }
+}
+
+async function testPurchaseBoosterBalls() {
+    try {
+        const result = await client.buyBoosterBalls();
+        document.getElementById('boosterResult').innerText = JSON.stringify(result, null, 2);
+    } catch (error) {
+        document.getElementById('boosterResult').innerText = `Error: ${error.message}`;
     }
 }
 
 // // Run the tests
-const client = new GameClient();
 client.testAllFunctions(); 
