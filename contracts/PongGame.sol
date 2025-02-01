@@ -66,27 +66,27 @@ contract PongGame {
         server = newServer;
     }
 
-    function incrementScore(uint256 points, uint256 boosterBallsUsed) public {
+    function incrementScore(uint256 points, uint256 boosterBallsUsed,address user) public {
         require(points > 0, "Points must be greater than 0");
-        require(boosterBallsUsed <= players[msg.sender].boosterBalls, "Not enough booster balls");
+        require(boosterBallsUsed <= players[user].boosterBalls, "Not enough booster balls");
         
-        bool isNewPlayer = !players[msg.sender].isActive;
+        bool isNewPlayer = !players[user].isActive;
         if (isNewPlayer) {
-            playerAddresses.push(msg.sender);
-            emit NewPlayerAdded(msg.sender);
+            playerAddresses.push(user);
+            emit NewPlayerAdded(user);
         }
         
         // Update score and booster balls in one transaction
-        players[msg.sender].score += points;
-        players[msg.sender].boosterBalls -= boosterBallsUsed;
-        players[msg.sender].isActive = true;
+        players[user].score += points;
+        players[user].boosterBalls -= boosterBallsUsed;
+        players[user].isActive = true;
         
-        updateLeaderboard(msg.sender, players[msg.sender].score);
+        updateLeaderboard(user, players[user].score);
         
         emit ScoreUpdated(
-            msg.sender, 
-            players[msg.sender].score, 
-            players[msg.sender].boosterBalls, 
+            user, 
+            players[user].score, 
+            players[user].boosterBalls, 
             isNewPlayer
         );
     }
@@ -121,7 +121,7 @@ contract PongGame {
         }
     }
 
-    function resetTournament() private onlyOwnerOrServer{
+    function resetTournament() public onlyOwnerOrServer{
         // Store current tournament data
         Tournament storage newTournament = tournaments[currentTournamentId];
         newTournament.startTime = tournamentStartTime;
