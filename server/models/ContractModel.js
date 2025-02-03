@@ -19,10 +19,7 @@ class ContractModel {
             }
         };
         this.wallet = new ethers.Wallet(process.env.PRIVATE_KEY, this.provider);
-        console.log('RPC_URL:', process.env.RPC_URL);
-        console.log('PRIVATE_KEY:', process.env.PRIVATE_KEY);
         this.wallet = new ethers.Wallet(process.env.PRIVATE_KEY, this.provider);
-        console.log("Contract address from env",process.env.CONTRACT_ADDRESS);
         this.contractAddress = process.env.CONTRACT_ADDRESS;
         this.contractABI = PongGameArtifact.abi;
         
