@@ -11,14 +11,13 @@ class ContractModel {
         // Configure the network after provider creation
         this.provider.network = {
             chainId: parseInt(process.env.CHAIN_ID),
-            name: 'CrossFi Testnet',
+            name: 'CrossFi Mainnet',
             nativeCurrency: {
                 name: 'XFI',
                 symbol: 'XFI',
                 decimals: 18
             }
         };
-        this.wallet = new ethers.Wallet(process.env.PRIVATE_KEY, this.provider);
         this.wallet = new ethers.Wallet(process.env.PRIVATE_KEY, this.provider);
         this.contractAddress = process.env.CONTRACT_ADDRESS;
         this.contractABI = PongGameArtifact.abi;
