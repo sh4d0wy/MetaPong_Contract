@@ -137,39 +137,55 @@ contract PongGame {
         emit ScoreUpdated(user, players[user].score, players[user].boosterBalls, isNewPlayer);
     }
 
-    /// @notice Updates the tournament leaderboard
-    /// @dev Maintains a sorted list of top 10 players
-    /// @param player Address of the player to update
-    /// @param score New score of the player
-    function updateLeaderboard(address player, uint256 score) private {
-        uint256 position = 10;
-        
-        // Find the correct position for the new score
-        for (uint256 i = 0; i < 10; i++) {
-            if (currentLeaderboardPlayers[i] == player) {
-                currentLeaderboardScores[i] = score;
-                position = i;
-                break;
-            } else if (currentLeaderboardScores[i] < score || currentLeaderboardPlayers[i] == address(0)) {
-                position = i;
-                break;
-            }
-        }
-
-        if (position < 10) {
-            // Shift lower scores down
-            for (uint256 i = 9; i > position; i--) {
-                currentLeaderboardPlayers[i] = currentLeaderboardPlayers[i-1];
-                currentLeaderboardScores[i] = currentLeaderboardScores[i-1];
-            }
-            
-            // Insert new score
-            currentLeaderboardPlayers[position] = player;
-            currentLeaderboardScores[position] = score;
-            
-            emit LeaderboardUpdated(player, score, position);
+/// @notice Updates the tournament leaderboard
+/// @dev Maintains a sorted list of top 10 players
+/// @param player Address of the player to update
+/// @param score New score of the player
+function updateLeaderboard(address player, uint256 score) private {
+    // First, remove the existing entry of the player if it exists
+    int256 existingPosition = -1;
+    for (uint256 i = 0; i < 10; i++) {
+        if (currentLeaderboardPlayers[i] == player) {
+            existingPosition = int256(i);
+            break;
         }
     }
+    
+    // If player was found, remove them by shifting all elements up
+    if (existingPosition != -1) {
+        for (uint256 i = uint256(existingPosition); i < 9; i++) {
+            currentLeaderboardPlayers[i] = currentLeaderboardPlayers[i + 1];
+            currentLeaderboardScores[i] = currentLeaderboardScores[i + 1];
+        }
+        // Clear the last position
+        currentLeaderboardPlayers[9] = address(0);
+        currentLeaderboardScores[9] = 0;
+    }
+    
+    // Find the correct position for the new score
+    uint256 insertPosition = 10;
+    for (uint256 i = 0; i < 10; i++) {
+        if (currentLeaderboardScores[i] < score || currentLeaderboardPlayers[i] == address(0)) {
+            insertPosition = i;
+            break;
+        }
+    }
+    
+    // Only proceed if the score qualifies for the leaderboard
+    if (insertPosition < 10) {
+        // Shift lower scores down
+        for (uint256 i = 9; i > insertPosition; i--) {
+            currentLeaderboardPlayers[i] = currentLeaderboardPlayers[i - 1];
+            currentLeaderboardScores[i] = currentLeaderboardScores[i - 1];
+        }
+        
+        // Insert new score
+        currentLeaderboardPlayers[insertPosition] = player;
+        currentLeaderboardScores[insertPosition] = score;
+        
+        emit LeaderboardUpdated(player, score, insertPosition);
+    }
+}
 
     // === Tournament Management ===
 
