@@ -84,6 +84,51 @@ class GameController {
             res.status(500).json({ error: error.message });
         }
     }
+
+    async getTournamentLeaderboard(req, res) {
+        try {
+            const tournamentId = parseInt(req.params.tournamentId);
+            if (isNaN(tournamentId) || tournamentId <= 0) {
+                return res.status(400).json({ 
+                    success: false, 
+                    error: 'Invalid tournament ID' 
+                });
+            }
+
+            // Get current tournament info to check if the requested tournament is current
+            const currentTournament = await ContractModel.getCurrentTournamentInfo();
+            
+            // If requesting current tournament, return current leaderboard
+            if (tournamentId === currentTournament.tournamentId) {
+                const currentLeaderboard = await ContractModel.getCurrentLeaderboard();
+                return res.json({ 
+                    success: true, 
+                    data: {
+                        startTime: currentTournament.startTime,
+                        endTime: currentTournament.endTime,
+                        leaderboard: currentLeaderboard,
+                        isCurrentTournament: true
+                    }
+                });
+            }
+
+            // Otherwise, get historical tournament data
+            const leaderboard = await ContractModel.getTournamentLeaderboard(tournamentId);
+            res.json({ 
+                success: true, 
+                data: {
+                    ...leaderboard,
+                    isCurrentTournament: false
+                }
+            });
+        } catch (error) {
+            console.error('Tournament leaderboard fetch error:', error);
+            res.status(500).json({ 
+                success: false, 
+                error: error.message || 'Failed to fetch tournament leaderboard' 
+            });
+        }
+    }
 }
 
 module.exports = new GameController();

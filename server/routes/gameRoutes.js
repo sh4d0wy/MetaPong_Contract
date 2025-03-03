@@ -7,6 +7,7 @@ const router = express.Router();
 
 router.get('/tournament/current', GameController.getCurrentTournament);
 router.get('/leaderboard', GameController.getLeaderboard);
+router.get('/leaderboard/:tournamentId', GameController.getTournamentLeaderboard);
 router.get('/player/:address', GameController.getPlayerStats);
 router.get('/players', GameController.getAllPlayers);
 router.get('/player/:address/mpx', GameController.getMPXScore);

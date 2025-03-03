@@ -158,6 +158,24 @@ class ContractModel {
     async isEligibleForAirdrop(address) {
         return await this.contract.isEligibleForAirdrop(address);
     }
+
+    // Add this new method to ContractModel class
+    async getTournamentLeaderboard(tournamentId) {
+        try {
+            const [startTime, endTime, players, scores] = await this.contract.getTournamentLeaderboard(tournamentId);
+            return {
+                startTime: Number(startTime),
+                endTime: Number(endTime),
+                leaderboard: players.map((player, index) => ({
+                    player,
+                    score: Number(scores[index])
+                }))
+            };
+        } catch (error) {
+            console.error('Error fetching tournament leaderboard:', error);
+            throw error;
+        }
+    }
 }
 
 module.exports = new ContractModel();
